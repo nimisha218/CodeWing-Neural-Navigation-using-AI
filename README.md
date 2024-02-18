@@ -45,6 +45,10 @@ Run the main script to start the game:
 
 Watch as the birds evolve and learn to play the game!
 
+## Working Sample
+
+![Task Manager Screenshot](imgs/working_model.png)
+
 ## Configuration
 
 You can customize the NEAT algorithm parameters by modifying the `config-feedforward.txt` file. Experiment with different settings to observe how they affect the learning process and bird behavior.
