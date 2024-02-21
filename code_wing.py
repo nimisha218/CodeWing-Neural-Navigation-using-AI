@@ -5,24 +5,24 @@ import random
 pygame.font.init()
 
 # Set the window dimensions
-WIN_WIDTH = 500
-WIN_HEIGHT = 800
+WINDOW_WIDTH = 500
+WINDOW_HEIGHT = 800
 
-GEN = 0
+GENERATION = 0
 
 # Load the images
-BIRD_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird3.png")))]
-PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
-BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base2.JPG")))
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg3.jpeg")))
+BIRD_IMAGES = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bird3.png")))]
+PIPE_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
+BASE_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base2.JPG")))
+BACKGROUND_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg3.jpeg")))
 
 STAT_FONT = pygame.font.SysFont("comicsans", 35)
 
 class Base:
 
-    VEL = 5
-    WIDTH = BASE_IMG.get_width()
-    IMG = BASE_IMG
+    VELOCITY = 5
+    WIDTH = BASE_IMAGE.get_width()
+    IMAGE = BASE_IMAGE
 
     def __init__(self, y):
         self.y = y
@@ -31,8 +31,8 @@ class Base:
     
     def move(self):
 
-        self.x1 -= self.VEL
-        self.x2 -= self.VEL
+        self.x1 -= self.VELOCITY
+        self.x2 -= self.VELOCITY
 
         if self.x1 + self.WIDTH < 0:
             self.x1 = self.x2 + self.WIDTH
@@ -41,8 +41,8 @@ class Base:
             self.x2 = self.x1 + self.WIDTH
 
     def draw(self, win):
-        win.blit(self.IMG, (self.x1, self.y))
-        win.blit(self.IMG, (self.x2, self.y))
+        win.blit(self.IMAGE, (self.x1, self.y))
+        win.blit(self.IMAGE, (self.x2, self.y))
 
 
 class Pipe:
@@ -50,7 +50,7 @@ class Pipe:
     GAP = 200
 
     # How fast the pipe will move
-    VEL = 5
+    VELOCITY = 5
 
     def __init__(self, x):
 
@@ -60,8 +60,8 @@ class Pipe:
         self.top = 0
         self.bottom = 0
     
-        self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True)
-        self.PIPE_BOTTOM = PIPE_IMG
+        self.PIPE_TOP = pygame.transform.flip(PIPE_IMAGE, False, True)
+        self.PIPE_BOTTOM = PIPE_IMAGE
 
         self.passed = False
         self.set_height()
@@ -72,7 +72,7 @@ class Pipe:
         self.bottom = self.height + self.GAP
     
     def move(self):
-        self.x -= self.VEL
+        self.x -= self.VELOCITY
     
     def draw(self, win):
         win.blit(self.PIPE_TOP, (self.x, self.top))
@@ -99,11 +99,11 @@ class Pipe:
 
 class Bird:
 
-    IMGS = BIRD_IMGS
+    IMAGES = BIRD_IMAGES
     # Rotation of the bird when it moves up or down
     MAX_ROTATION = 25
     # How much we will rotate the bird
-    ROT_VEL = 20
+    ROTATION_VELOCITY = 20
     # How long we will show each bird
     ANIMATION_TIME = 5
 
@@ -113,16 +113,16 @@ class Bird:
         self.y = y
         self.tilt = 0
         self.tick_count = 0
-        self.vel = 0
+        self.velocity = 0
         self.height = self.y
         self.img_count = 0
-        self.img = self.IMGS[0]
+        self.img = self.IMAGES[0]
     
     # Method to make the bird jump up
     def jump(self):
 
         # To go up in the co-ordinate system, we need a negative y value
-        self.vel = -10.5
+        self.velocity = -10.5
         # Track when the bird last jumped
         self.tick_count = 0
         self.height = self.y
@@ -132,7 +132,7 @@ class Bird:
 
         self.tick_count += 1
         # Compute displacement
-        d = self.vel * self.tick_count + 1.5 * self.tick_count ** 2
+        d = self.velocity * self.tick_count + 1.5 * self.tick_count ** 2
 
         if d >= 16:
             d = 16
@@ -150,7 +150,7 @@ class Bird:
         # If the bird is moving downwards
         else:
             if self.tilt > -90:
-                self.tilt -= self.ROT_VEL
+                self.tilt -= self.ROTATION_VELOCITY
         
     def draw(self, win):
 
@@ -158,19 +158,19 @@ class Bird:
 
         # Make the bird flap its wings
         if self.img_count < self.ANIMATION_TIME:
-            self.img = self.IMGS[0]
+            self.img = self.IMAGES[0]
         elif self.img_count < self.ANIMATION_TIME*2:
-            self.img = self.IMGS[1]
+            self.img = self.IMAGES[1]
         elif self.img_count < self.ANIMATION_TIME*3:
-            self.img = self.IMGS[2]
+            self.img = self.IMAGES[2]
         elif self.img_count < self.ANIMATION_TIME*4:
-            self.img = self.IMGS[1]
+            self.img = self.IMAGES[1]
         elif self.img_count < self.ANIMATION_TIME*4 + 1:
-            self.img = self.IMGS[0]
+            self.img = self.IMAGES[0]
             self.img_count = 0
 
         if self.tilt <= -80:
-            self.img = self.IMGS[1]
+            self.img = self.IMAGES[1]
             self.img_count = self.ANIMATION_TIME*2
         
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
@@ -183,15 +183,15 @@ class Bird:
     
 
 
-def draw_window(win, birds, pipes, base, score, gen):
+def draw_window(win, birds, pipes, base, score, generation):
 
-    win.blit(BG_IMG, (0,0))
+    win.blit(BACKGROUND_IMAGE, (0,0))
 
     for pipe in pipes:
         pipe.draw(win)
 
     text = STAT_FONT.render("Score: " + str(score), 1, (255, 255, 255))
-    win.blit(text, (WIN_WIDTH - 20 - text.get_width(), 10))
+    win.blit(text, (WINDOW_WIDTH - 20 - text.get_width(), 10))
     
     base.draw(win)
 
@@ -203,8 +203,8 @@ def draw_window(win, birds, pipes, base, score, gen):
 
 def main(genomes, config):
     
-    global GEN
-    GEN += 1
+    global GENERATION
+    GENERATION += 1
     nets = []
     ge = []
     birds = []
@@ -219,7 +219,7 @@ def main(genomes, config):
 
     base = Base(730)
     pipes = [Pipe(600)]
-    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
 
     score = 0
@@ -296,7 +296,7 @@ def main(genomes, config):
                 ge.pop(x)
 
         base.move()
-        draw_window(win, birds, pipes, base, score, GEN)
+        draw_window(win, birds, pipes, base, score, GENERATION)
 
 
 def run(config_path):
@@ -321,5 +321,6 @@ if __name__ == "__main__":
 
     config_path = os.path.join(local_dir, "config-feedforward.txt")
 
-    run(config_path)
+    pygame.display.set_caption("Welcome to CodeWing")
 
+    run(config_path)
